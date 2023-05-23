@@ -1,16 +1,12 @@
 import { create } from "zustand";
 import { CanvasState, initialState } from "./initialState";
 
-interface Action{
-  setWH:(w:number,h:number)=>void
-}
+// interface Action{
+//   setWH:(w:number,h:number)=>void
+// }
 
-export type Store = CanvasState & Action
+export type Store = CanvasState
 
-export const useStore = create<Store>((set)=>({
+export const useStore = create<Store>(()=>({
   ...initialState,
-
-setWH:(w, h)=> {
-  set({width:w,height:h})
-},
 }))
