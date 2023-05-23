@@ -1,8 +1,11 @@
+import { Canvas } from "./components/Canvas"
+import { Layout } from "./components/Layout"
+
 function App() {
   return (
-    <>
-      <h1>Vite + React</h1>
-    </>
+    <Layout>
+      <Canvas />
+    </Layout>
   )
 }
 
