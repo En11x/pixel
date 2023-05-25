@@ -6,7 +6,8 @@ export interface CanvasState {
   style: {
     bgColor: string,
     gridColor:string,
-    gridWidth:number
+    gridWidth:number,
+    hoverColor:string
   }
 }
 
@@ -18,6 +19,7 @@ export const initialState: CanvasState = {
   style: {
     bgColor: 'white',
     gridColor:'#D9D9D9',
-    gridWidth:10
+    gridWidth:10,
+    hoverColor:'#B2B2B2'
   },
 }
