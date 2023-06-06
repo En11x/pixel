@@ -1,4 +1,4 @@
-import { Store } from "./createStore";
+import { Store } from './createStore'
 
 //example
-export const selectedCanvasWidth = (s:Store):number=> s.config.width
+export const selectedCanvasWidth = (s: Store): number => s.config.width

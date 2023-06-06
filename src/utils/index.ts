@@ -5,7 +5,7 @@ export const getOrigin = (position: Position, width: number): Position => {
 
   return {
     x: x - (x % width),
-    y: y - (y % width),
+    y: y - (y % width)
   }
 }
 

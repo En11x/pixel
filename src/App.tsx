@@ -7,7 +7,7 @@ import { Tool } from '@/components/tools'
 
 function App() {
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className='min-h-screen bg-black text-white flex flex-col'>
       <Navbar />
       <Layout>
         <Tool />

@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { CanvasState, initialState } from "./initialState";
+import { create } from 'zustand'
+import { CanvasState, initialState } from './initialState'
 
 // interface Action{
 //   setWH:(w:number,h:number)=>void
@@ -7,6 +7,6 @@ import { CanvasState, initialState } from "./initialState";
 
 export type Store = CanvasState
 
-export const useStore = create<Store>(()=>({
-  ...initialState,
+export const useStore = create<Store>(() => ({
+  ...initialState
 }))

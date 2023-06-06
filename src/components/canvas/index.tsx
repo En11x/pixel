@@ -5,12 +5,12 @@ import { getOrigin } from '@/utils'
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const width = useStore((s) => s.config.width)
-  const height = useStore((s) => s.config.height)
-  const bgColor = useStore((s) => s.style.bgColor)
-  const gridColor = useStore((s) => s.style.gridColor)
-  const gridWidth = useStore((s) => s.style.gridWidth)
-  const hoverColor = useStore((s) => s.style.hoverColor)
+  const width = useStore(s => s.config.width)
+  const height = useStore(s => s.config.height)
+  const bgColor = useStore(s => s.style.bgColor)
+  const gridColor = useStore(s => s.style.gridColor)
+  const gridWidth = useStore(s => s.style.gridWidth)
+  const hoverColor = useStore(s => s.style.hoverColor)
   const pixel = useRef<Pixel | null>(null)
 
   const getPosition = (e: MouseEvent): Position => {
@@ -18,7 +18,7 @@ export const Canvas = () => {
 
     return {
       x: e.pageX - canvas.offsetLeft,
-      y: e.pageY - canvas.offsetTop,
+      y: e.pageY - canvas.offsetTop
     }
   }
 
