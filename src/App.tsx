@@ -1,9 +1,9 @@
-import { Canvas } from './components/canvas'
-import { CanvasContainer } from './components/canvas/Container'
-import { Layout } from './components/layout'
-import { Navbar } from './components/navbar'
-import { Navigation } from './components/navigation'
-import { Tools } from './components/tools'
+import { Canvas } from '@/components/canvas'
+import { CanvasContainer } from '@/components/canvas/Container'
+import { Layout } from '@/components/layout'
+import { Navbar } from '@/components/navbar'
+import { Navigation } from '@/components/navigation'
+import { Tools } from '@/components/tools'
 
 function App() {
   return (

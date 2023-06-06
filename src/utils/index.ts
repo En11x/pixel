@@ -1,4 +1,4 @@
-import { Position } from '../types'
+import { Position } from '@/types'
 
 export const getOrigin = (position: Position, width: number): Position => {
   const { x, y } = position
