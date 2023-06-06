@@ -6,3 +6,9 @@ export type Position = {
 export type Pixel = Position & {
   color: string
 }
+
+export enum Tools {
+  PENCEL = 'PENCEL',
+  ERASER = 'ERASER',
+  BRUSH = 'BRUSH'
+}

@@ -3,14 +3,14 @@ import { CanvasContainer } from '@/components/canvas/Container'
 import { Layout } from '@/components/layout'
 import { Navbar } from '@/components/navbar'
 import { Navigation } from '@/components/navigation'
-import { Tools } from '@/components/tools'
+import { Tool } from '@/components/tools'
 
 function App() {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       <Navbar />
       <Layout>
-        <Tools />
+        <Tool />
         <CanvasContainer>
           <Canvas />
         </CanvasContainer>

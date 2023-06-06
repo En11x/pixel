@@ -1,3 +1,5 @@
+import { Tools } from "@/types"
+
 export interface CanvasState {
   config: {
     width: number
@@ -8,6 +10,9 @@ export interface CanvasState {
     gridColor:string,
     gridWidth:number,
     hoverColor:string
+  },
+  tool:{
+    selected:Tools
   }
 }
 
@@ -22,4 +27,7 @@ export const initialState: CanvasState = {
     gridWidth:10,
     hoverColor:'#B2B2B2'
   },
+  tool:{
+    selected:Tools.PENCEL
+  }
 }
