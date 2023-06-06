@@ -9,6 +9,16 @@ export default defineConfig({
   plugins: [
     UnoCSS({
       presets: [presetUno(), presetAttributify()],
+      rules:[
+        [
+          'bg-333',{'background-color':'#333'}
+        ]
+      ],
+      shortcuts:[
+        {
+          'f-center':'flex flex-items-center flex-justify-center'
+        }
+      ],
     }),
     react(),
   ],

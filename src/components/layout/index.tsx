@@ -7,5 +7,7 @@ interface LayoutProps {
 export const Layout: FC<LayoutProps> = (props) => {
   const { children } = props
 
-  return <div className='min-h-screen flex flex-items-center flex-justify-center bg-black'>{children}</div>
+  return <div className='grid h-100% flex-1' style={{
+    'gridTemplateColumns':'100px auto 250px'
+  }}>{children}</div>
 }

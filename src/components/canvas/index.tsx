@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
-import { useStore } from '../store'
-import { Pixel, Position } from '../types'
-import { getOrigin } from '../utils'
+import { useStore } from '../../store'
+import { Pixel, Position } from '../../types'
+import { getOrigin } from '../../utils'
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
