@@ -11,7 +11,11 @@ export interface CanvasState {
     gridWidth: number
     hoverColor: string
   }
-  currentTool: Tools
+  settings: {
+    tool: Tools
+    color: string
+  }
+  data: Map<number, string>
 }
 
 export const initialState: CanvasState = {
@@ -25,5 +29,9 @@ export const initialState: CanvasState = {
     gridWidth: 10,
     hoverColor: '#B2B2B2'
   },
-  currentTool: Tools['PENCEL']
+  settings: {
+    tool: Tools['PENCEL'],
+    color: '#000000'
+  },
+  data: new Map()
 }

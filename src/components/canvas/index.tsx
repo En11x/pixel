@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useStore } from '@/store'
 import { Pixel, Position } from '@/types'
-import { getOrigin } from '@/utils'
+import { genrateCanvasDataKey, getOrigin } from '@/utils'
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -12,6 +12,9 @@ export const Canvas = () => {
   const gridWidth = useStore(s => s.style.gridWidth)
   const hoverColor = useStore(s => s.style.hoverColor)
   const pixel = useRef<Pixel | null>(null)
+  const canvasData = useStore(s => s.data)
+  const setCanvasData = useStore(s => s.setData)
+  const toolColor = useStore(s => s.settings.color)
 
   const getPosition = (e: MouseEvent): Position => {
     const canvas = canvasRef.current as HTMLCanvasElement
@@ -22,23 +25,23 @@ export const Canvas = () => {
     }
   }
 
-  const drawPixel = (x: number, y: number, color: string) => {
+  const drawPixel = (pos: Position, color: string) => {
     const canvas = canvasRef.current
     const context = canvas?.getContext('2d') as CanvasRenderingContext2D
 
     context.fillStyle = color
-    context.fillRect(x, y, gridWidth, gridWidth)
+    context.fillRect(pos.x, pos.y, gridWidth, gridWidth)
   }
 
   const onMouseMove = (event: MouseEvent) => {
     const canvas = canvasRef.current
     const context = canvas?.getContext('2d') as CanvasRenderingContext2D
     const { x, y } = getPosition(event)
-    const { x: originX, y: originY } = getOrigin({ x, y }, gridWidth)
+    const origin = getOrigin({ x, y }, gridWidth)
     const data = context.getImageData(x, y, 1, 1).data
     const rgba = `rgba(${data[0]},${data[1]},${data[2]},${data[3]})`
 
-    const currentPixel = { x: originX, y: originY, color: rgba }
+    const currentPixel = { x: origin.x, y: origin.y, color: rgba }
 
     if (!pixel.current) {
       pixel.current = currentPixel
@@ -46,11 +49,35 @@ export const Canvas = () => {
 
     const { x: currentX, y: currentY, color: currentColor } = pixel.current
 
-    if (!(originX === currentX && originY === currentY)) {
-      drawPixel(currentX, currentY, currentColor)
+    const originKey = genrateCanvasDataKey(origin)
+    if (canvasData.has(originKey)) {
+      return
+    }
+
+    if (!(origin.x === currentX && origin.y === currentY)) {
+      drawPixel({ x: currentX, y: currentY }, currentColor)
       pixel.current = currentPixel
     }
-    drawPixel(originX, originY, hoverColor)
+    drawPixel(origin, hoverColor)
+  }
+
+  const paint = (event: MouseEvent) => {
+    event.preventDefault()
+
+    const pointerPos = getPosition(event)
+    const origin = getOrigin(pointerPos, gridWidth)
+    const key = genrateCanvasDataKey(origin)
+    if (!canvasData.has(key)) {
+      drawPixel(origin, toolColor)
+      setCanvasData(key, toolColor)
+      if (!pixel.current) {
+        return
+      }
+      const { x: currentX, y: currentY } = pixel.current
+      if (origin.x === currentX && origin.y === currentY) {
+        pixel.current!.color = toolColor
+      }
+    }
   }
 
   const onMouseLeave = () => {
@@ -58,7 +85,7 @@ export const Canvas = () => {
       return
     }
     const { x: currentX, y: currentY, color: currentColor } = pixel.current
-    drawPixel(currentX, currentY, currentColor)
+    drawPixel({ x: currentX, y: currentY }, currentColor)
     pixel.current = null
   }
 
@@ -101,9 +128,13 @@ export const Canvas = () => {
     canvas?.addEventListener('mousemove', onMouseMove)
     canvas?.addEventListener('mouseleave', onMouseLeave)
 
+    canvas?.addEventListener('click', paint)
+
     return () => {
       canvas?.removeEventListener('mousemove', onMouseMove)
       canvas?.removeEventListener('mouseleave', onMouseLeave)
+
+      canvas?.removeEventListener('click', paint)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

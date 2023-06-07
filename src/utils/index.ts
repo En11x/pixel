@@ -1,3 +1,4 @@
+import { POS_NUMBER } from '@/constants'
 import { Position } from '@/types'
 
 export const getOrigin = (position: Position, width: number): Position => {
@@ -28,3 +29,5 @@ export const rgbaToHex = (rgba: string) => {
     ((a as unknown as number) * 255).toString(16).substring(0, 2)
   )
 }
+
+export const genrateCanvasDataKey = ({ x, y }: Position): number => x * POS_NUMBER + y

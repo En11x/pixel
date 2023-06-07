@@ -3,7 +3,7 @@ import { ToolItem } from './ToolItem'
 import { useStore } from '@/store'
 
 export const Tool = () => {
-  const currentTool = useStore(s => s.currentTool)
+  const currentTool = useStore(s => s.settings.tool)
   const setTool = useStore(s => s.setTool)
 
   return (
