@@ -108,5 +108,9 @@ export const Canvas = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  return <canvas ref={canvasRef}></canvas>
+  return (
+    <div className='f-center flex-1'>
+      <canvas ref={canvasRef}></canvas>
+    </div>
+  )
 }

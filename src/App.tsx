@@ -1,9 +1,9 @@
 import { Canvas } from '@/components/canvas'
-import { CanvasContainer } from '@/components/canvas/Container'
 import { Layout } from '@/components/layout'
 import { Navbar } from '@/components/navbar'
 import { Navigation } from '@/components/navigation'
 import { Tool } from '@/components/tools'
+import { ToolOption } from './components/tools/ToolOption'
 
 function App() {
   return (
@@ -11,9 +11,10 @@ function App() {
       <Navbar />
       <Layout>
         <Tool />
-        <CanvasContainer>
+        <div className='flex flex-col'>
+          <ToolOption />
           <Canvas />
-        </CanvasContainer>
+        </div>
         <Navigation />
       </Layout>
     </div>

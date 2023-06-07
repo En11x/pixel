@@ -12,8 +12,10 @@ export default defineConfig({
       presets: [presetUno(), presetAttributify()],
       rules: [
         ['bg-333', { 'background-color': '#333' }],
+        ['bg-222', { 'background-color': '#222' }],
         ['tool-hover', { 'background-color': 'rgba(255,255,255,.2)' }],
         ['tool-selected', { 'background-color': '#2084fc' }],
+        [/^fs-(.+)$/, ([, v]) => ({ 'font-size': `${v}px` })],
         [
           /^repeat-(.+)$/,
           ([, v]) => ({ display: 'grid', 'grid-template-columns': `repeat(${v},1fr)` })
