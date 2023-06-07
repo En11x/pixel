@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useStore } from '@/store'
-import { Pixel, Position } from '@/types'
+import { Pixel, Position, Tools } from '@/types'
 import { genrateCanvasDataKey, getOrigin } from '@/utils'
 
 export const Canvas = () => {
@@ -14,6 +14,8 @@ export const Canvas = () => {
   const pixel = useRef<Pixel | null>(null)
   const canvasData = useStore(s => s.data)
   const setCanvasData = useStore(s => s.setData)
+  const delCanvasData = useStore(s => s.delData)
+  const tool = useStore(s => s.settings.tool)
   const toolColor = useStore(s => s.settings.color)
 
   const getPosition = (e: MouseEvent): Position => {
@@ -33,27 +35,28 @@ export const Canvas = () => {
     context.fillRect(pos.x, pos.y, gridWidth, gridWidth)
   }
 
+  const getPixelBg = ({ x, y }: Position): string => {
+    const mouldX = (x / gridWidth) % 2
+    const mouldY = (y / gridWidth) % 2
+    if ((mouldX === 0 && mouldY === 0) || (mouldX !== 0 && mouldY !== 0)) {
+      return bgColor
+    }
+    return gridColor
+  }
+
   const onMouseMove = (event: MouseEvent) => {
-    const canvas = canvasRef.current
-    const context = canvas?.getContext('2d') as CanvasRenderingContext2D
     const { x, y } = getPosition(event)
     const origin = getOrigin({ x, y }, gridWidth)
-    const data = context.getImageData(x, y, 1, 1).data
-    const rgba = `rgba(${data[0]},${data[1]},${data[2]},${data[3]})`
-
-    const currentPixel = { x: origin.x, y: origin.y, color: rgba }
-
+    const bgColor = getPixelBg(origin)
+    const currentPixel = { x: origin.x, y: origin.y, color: bgColor }
     if (!pixel.current) {
       pixel.current = currentPixel
     }
-
     const { x: currentX, y: currentY, color: currentColor } = pixel.current
-
     const originKey = genrateCanvasDataKey(origin)
     if (canvasData.has(originKey)) {
       return
     }
-
     if (!(origin.x === currentX && origin.y === currentY)) {
       drawPixel({ x: currentX, y: currentY }, currentColor)
       pixel.current = currentPixel
@@ -80,6 +83,35 @@ export const Canvas = () => {
     }
   }
 
+  const clear = (event: MouseEvent) => {
+    event.preventDefault()
+
+    const pointerPos = getPosition(event)
+    const origin = getOrigin(pointerPos, gridWidth)
+    const key = genrateCanvasDataKey(origin)
+    if (canvasData.has(key)) {
+      const bgColor = getPixelBg(origin)
+      drawPixel(origin, bgColor)
+      delCanvasData(key)
+      if (!pixel.current) {
+        return
+      }
+      const { x: currentX, y: currentY } = pixel.current
+      if (origin.x === currentX && origin.y === currentY) {
+        pixel.current!.color = bgColor
+      }
+    }
+  }
+
+  const onClickCanvas = (event: MouseEvent) => {
+    if (tool === Tools['PENCEL']) {
+      return paint(event)
+    }
+    if (tool === Tools['ERASER']) {
+      return clear(event)
+    }
+  }
+
   const onMouseLeave = () => {
     if (!pixel.current) {
       return
@@ -93,7 +125,7 @@ export const Canvas = () => {
     const canvas = canvasRef.current
 
     if (event.button === 0) {
-      canvas?.addEventListener('mousemove', paint)
+      canvas?.addEventListener('mousemove', onClickCanvas)
     }
   }
 
@@ -101,7 +133,7 @@ export const Canvas = () => {
     const canvas = canvasRef.current
 
     if (event.button === 0) {
-      canvas?.removeEventListener('mousemove', paint)
+      canvas?.removeEventListener('mousemove', onClickCanvas)
     }
   }
 
@@ -142,20 +174,20 @@ export const Canvas = () => {
     const canvas = canvasRef.current
 
     canvas?.addEventListener('mousemove', onMouseMove)
-    canvas?.addEventListener('click', paint)
+    canvas?.addEventListener('click', onClickCanvas)
     canvas?.addEventListener('mousedown', onMouseDown)
     canvas?.addEventListener('mouseup', onMouseUp)
     canvas?.addEventListener('mouseleave', onMouseLeave)
 
     return () => {
       canvas?.removeEventListener('mousemove', onMouseMove)
-      canvas?.removeEventListener('click', paint)
+      canvas?.removeEventListener('click', onClickCanvas)
       canvas?.removeEventListener('mousedown', onMouseDown)
       canvas?.removeEventListener('mouseup', onMouseUp)
       canvas?.removeEventListener('mouseleave', onMouseLeave)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [tool])
 
   return (
     <div className='f-center flex-1'>
