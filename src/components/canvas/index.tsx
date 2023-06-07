@@ -17,6 +17,7 @@ export const Canvas = () => {
   const delCanvasData = useStore(s => s.delData)
   const tool = useStore(s => s.settings.tool)
   const toolColor = useStore(s => s.settings.color)
+  const size = useStore(s => s.settings.size)
 
   const drawPixel = (pos: Position, color: string) => {
     const canvas = canvasRef.current
@@ -33,17 +34,6 @@ export const Canvas = () => {
       return bgColor
     }
     return gridColor
-  }
-
-  const onMouseMove = (event: MouseEvent) => {
-    const x = event.offsetX
-    const y = event.offsetY
-    const origin = getOrigin({ x, y }, gridWidth)
-    const originKey = genrateCanvasDataKey(origin)
-    if (canvasData.has(originKey)) {
-      return
-    }
-    drawMark(origin, hoverColor)
   }
 
   const paint = (event: MouseEvent) => {
@@ -70,22 +60,49 @@ export const Canvas = () => {
     }
   }
 
-  const drawMark = (pos: Position, color: string) => {
+  const drawMark = ({ x, y }: Position, color: string) => {
     const mark = markRef.current
     const canvas = canvasRef.current
-    mark!.style.left = `${pos.x + canvas!.offsetLeft}px`
-    mark!.style.top = `${pos.y + canvas!.offsetTop}px`
-    mark!.width = gridWidth
-    mark!.height = gridWidth
+    const minX = canvas!.offsetLeft
+    const maxX = minX + width
+    const minY = canvas!.offsetTop
+    const maxY = minY + height
+    const eraserSize = tool === Tools.ERASER ? size : 1
+    const markWidth = gridWidth * eraserSize
+    const offset = Math.floor(eraserSize / 2) * gridWidth
+    const markLeft = x + minX - offset
+    const markRight = markLeft + markWidth
+    const markTop = y + minY - offset
+    const markBottom = markTop + markWidth
+    console.log(markLeft, markTop)
+    mark!.style.left = `${
+      markLeft < minX ? minX : markRight > maxX ? maxX - markWidth : markLeft
+    }px`
+    mark!.style.top = `${markTop < minY ? minY : markBottom > maxY ? maxY - markWidth : markTop}px`
+    mark!.style.opacity = '0.7'
+    mark!.width = markWidth
+    mark!.height = markWidth
     const context = mark?.getContext('2d') as CanvasRenderingContext2D
     context.fillStyle = color
-    context.fillRect(0, 0, gridWidth, gridWidth)
+    context.fillRect(0, 0, markWidth, markWidth)
   }
 
   const clearMark = () => {
     const mark = markRef.current
     mark!.width = 0
     mark!.height = 0
+  }
+
+  const onMouseMove = (event: MouseEvent) => {
+    const x = event.offsetX
+    const y = event.offsetY
+    const origin = getOrigin({ x, y }, gridWidth)
+    console.log(x, y, origin)
+    const originKey = genrateCanvasDataKey(origin)
+    if (canvasData.has(originKey)) {
+      return
+    }
+    drawMark(origin, hoverColor)
   }
 
   const onClickCanvas = useCallback(
@@ -171,7 +188,7 @@ export const Canvas = () => {
       canvas?.removeEventListener('mouseup', onMouseUp)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tool])
+  }, [tool, size])
 
   return (
     <div className='f-center flex-1 relative'>
