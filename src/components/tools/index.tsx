@@ -7,7 +7,7 @@ export const Tool = () => {
   const setTool = useStore(s => s.setTool)
 
   return (
-    <div className='bg-333 flex flex-wrap grid-content-start'>
+    <div className='bg-333 flex flex-wrap grid-content-start z-4'>
       <div className='h-50px f-center flex-basis-100%'>TOOLS</div>
       {Object.values(Tools).map(tool => (
         <ToolItem
