@@ -14,6 +14,7 @@ export interface CanvasState {
   settings: {
     tool: Tools
     color: string
+    size: number
   }
   data: Map<number, string>
 }
@@ -31,7 +32,8 @@ export const initialState: CanvasState = {
   },
   settings: {
     tool: Tools['PENCEL'],
-    color: '#000000'
+    color: '#000000',
+    size: 1
   },
   data: new Map()
 }
