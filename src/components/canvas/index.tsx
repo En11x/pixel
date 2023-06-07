@@ -89,6 +89,22 @@ export const Canvas = () => {
     pixel.current = null
   }
 
+  const onMouseDown = (event: MouseEvent) => {
+    const canvas = canvasRef.current
+
+    if (event.button === 0) {
+      canvas?.addEventListener('mousemove', paint)
+    }
+  }
+
+  const onMouseUp = (event: MouseEvent) => {
+    const canvas = canvasRef.current
+
+    if (event.button === 0) {
+      canvas?.removeEventListener('mousemove', paint)
+    }
+  }
+
   //init canvas
   useEffect(() => {
     const canvas = canvasRef.current
@@ -126,15 +142,17 @@ export const Canvas = () => {
     const canvas = canvasRef.current
 
     canvas?.addEventListener('mousemove', onMouseMove)
-    canvas?.addEventListener('mouseleave', onMouseLeave)
-
     canvas?.addEventListener('click', paint)
+    canvas?.addEventListener('mousedown', onMouseDown)
+    canvas?.addEventListener('mouseup', onMouseUp)
+    canvas?.addEventListener('mouseleave', onMouseLeave)
 
     return () => {
       canvas?.removeEventListener('mousemove', onMouseMove)
-      canvas?.removeEventListener('mouseleave', onMouseLeave)
-
       canvas?.removeEventListener('click', paint)
+      canvas?.removeEventListener('mousedown', onMouseDown)
+      canvas?.removeEventListener('mouseup', onMouseUp)
+      canvas?.removeEventListener('mouseleave', onMouseLeave)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
