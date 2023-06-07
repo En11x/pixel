@@ -11,9 +11,7 @@ export interface CanvasState {
     gridWidth: number
     hoverColor: string
   }
-  tool: {
-    selected: Tools
-  }
+  currentTool: Tools
 }
 
 export const initialState: CanvasState = {
@@ -27,7 +25,5 @@ export const initialState: CanvasState = {
     gridWidth: 10,
     hoverColor: '#B2B2B2'
   },
-  tool: {
-    selected: Tools.PENCEL
-  }
+  currentTool: Tools['PENCEL']
 }

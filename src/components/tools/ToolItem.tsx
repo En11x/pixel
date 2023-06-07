@@ -22,10 +22,21 @@ const TOOLS: Record<Tools, ReactNode> = {
 
 interface ToolItemProps {
   kit: Tools
+  selected: boolean
+  onClick: () => void
 }
 
 export const ToolItem = (props: ToolItemProps) => {
-  const { kit } = props
+  const { kit, selected, onClick } = props
 
-  return <div className='w-50% h-48px f-center cursor-pointer hover:tool-hover'>{TOOLS[kit]}</div>
+  return (
+    <div
+      className={`w-50% h-48px f-center cursor-pointer ${
+        selected ? 'tool-selected' : 'hover:tool-hover'
+      }`}
+      onClick={onClick}
+    >
+      {TOOLS[kit]}
+    </div>
+  )
 }

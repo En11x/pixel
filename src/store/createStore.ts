@@ -7,6 +7,7 @@ import { CanvasState, initialState } from './initialState'
 
 export type Store = CanvasState
 
-export const useStore = create<Store>(() => ({
+export const useStore = create<Store>(set => ({
   ...initialState
+  // setTool:()=>set(s=>())
 }))
