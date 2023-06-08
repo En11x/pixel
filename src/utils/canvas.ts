@@ -11,3 +11,4 @@ export const getOrigin = (position: Position, width: number): Position => {
 }
 
 export const genrateCanvasDataKey = ({ x, y }: Position): number => x * POS_NUMBER + y
+export const restoreCanvasDataKey = (key:number): Position => ({x:Math.floor(key/POS_NUMBER),y:key%POS_NUMBER})

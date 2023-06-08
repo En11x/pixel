@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { memo, useCallback, useEffect, useRef, useTransition } from 'react'
 import { useStore } from '@/store'
 import { Position, Tools } from '@/types'
-import { genrateCanvasDataKey, getOrigin } from '@/utils'
+import { genrateCanvasDataKey, getOrigin, pxToNumber, restoreCanvasDataKey } from '@/utils'
 
-export const Canvas = () => {
+export const Canvas = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const markRef = useRef<HTMLCanvasElement>(null)
   const width = useStore(s => s.config.width)
@@ -19,24 +19,24 @@ export const Canvas = () => {
   const toolColor = useStore(s => s.settings.color)
   const size = useStore(s => s.settings.size)
 
-  const drawPixel = (pos: Position, color: string) => {
+  const drawPixel = useCallback((pos: Position, color: string) => {
     const canvas = canvasRef.current
     const context = canvas?.getContext('2d') as CanvasRenderingContext2D
 
     context.fillStyle = color
     context.fillRect(pos.x, pos.y, gridWidth, gridWidth)
-  }
+  },[gridWidth])
 
-  const getPixelBg = ({ x, y }: Position): string => {
+  const getPixelBg =  useCallback(({ x, y }: Position): string => {
     const mouldX = (x / gridWidth) % 2
     const mouldY = (y / gridWidth) % 2
     if ((mouldX === 0 && mouldY === 0) || (mouldX !== 0 && mouldY !== 0)) {
       return bgColor
     }
     return gridColor
-  }
+  },[bgColor, gridColor, gridWidth])
 
-  const paint = (event: MouseEvent) => {
+  const paint = useCallback((event: MouseEvent) => {
     const x = event.offsetX
     const y = event.offsetY
     const origin = getOrigin({ x, y }, gridWidth)
@@ -46,26 +46,44 @@ export const Canvas = () => {
       drawPixel(origin, toolColor)
       setCanvasData(key, toolColor)
     }
-  }
+  },[canvasData, drawPixel, gridWidth, setCanvasData, toolColor])
 
-  const clear = (event: MouseEvent) => {
-    const x = event.offsetX
-    const y = event.offsetY
-    const origin = getOrigin({ x, y }, gridWidth)
-    const key = genrateCanvasDataKey(origin)
-    if (canvasData.has(key)) {
-      const bgColor = getPixelBg(origin)
-      drawPixel(origin, bgColor)
-      delCanvasData(key)
+  const clear = useCallback(() => {
+    console.log(canvasData.size,'?')
+    if(!canvasData.size){
+      return
     }
-  }
-
-  const drawMark = ({ x, y }: Position, color: string) => {
     const mark = markRef.current
     const canvas = canvasRef.current
-    const minX = canvas!.offsetLeft
+    const canvasLeft = canvas?.offsetLeft || 0
+    const canvasTop = canvas?.offsetTop || 0
+    const markWidth = size * gridWidth
+    const markLeft = mark?.style.left || ''
+    const markTop = mark?.style.top || ''
+    const left = pxToNumber(markLeft) - canvasLeft
+    const top = pxToNumber(markTop) - canvasTop
+    const right = left + markWidth
+    const bottom = top + markWidth
+    console.log('clear')
+    for (let x = left; x < right; x++) {
+      for (let y = top; y < bottom; y++) {
+        const origin = getOrigin({ x, y }, gridWidth)
+        const key = genrateCanvasDataKey(origin)
+        if (canvasData.has(key)) {
+          const bgColor = getPixelBg(origin)
+          drawPixel(origin, bgColor)
+          delCanvasData(key)
+        }
+      }
+    }
+  },[canvasData,delCanvasData,drawPixel,getPixelBg,gridWidth,size])
+
+  const drawMark = useCallback(({ x, y }: Position, color: string) => {
+    const mark = markRef.current as HTMLCanvasElement
+    const canvas = canvasRef.current
+    const minX = canvas?.offsetLeft || 0
     const maxX = minX + width
-    const minY = canvas!.offsetTop
+    const minY = canvas?.offsetTop || 0
     const maxY = minY + height
     const eraserSize = tool === Tools.ERASER ? size : 1
     const markWidth = gridWidth * eraserSize
@@ -74,69 +92,75 @@ export const Canvas = () => {
     const markRight = markLeft + markWidth
     const markTop = y + minY - offset
     const markBottom = markTop + markWidth
-    console.log(markLeft, markTop)
-    mark!.style.left = `${
+    mark.style.left = `${
       markLeft < minX ? minX : markRight > maxX ? maxX - markWidth : markLeft
     }px`
-    mark!.style.top = `${markTop < minY ? minY : markBottom > maxY ? maxY - markWidth : markTop}px`
-    mark!.style.opacity = '0.7'
-    mark!.width = markWidth
-    mark!.height = markWidth
+    mark.style.top = `${markTop < minY ? minY : markBottom > maxY ? maxY - markWidth : markTop}px`
+    mark.style.opacity = '0.7'
+    mark.width = markWidth
+    mark.height = markWidth
     const context = mark?.getContext('2d') as CanvasRenderingContext2D
     context.fillStyle = color
     context.fillRect(0, 0, markWidth, markWidth)
-  }
+  },[gridWidth, height, size, tool, width])
 
   const clearMark = () => {
-    const mark = markRef.current
-    mark!.width = 0
-    mark!.height = 0
+    const mark = markRef.current as HTMLCanvasElement
+    mark.width = 0
+    mark.height = 0
   }
 
-  const onMouseMove = (event: MouseEvent) => {
-    const x = event.offsetX
-    const y = event.offsetY
-    const origin = getOrigin({ x, y }, gridWidth)
-    console.log(x, y, origin)
-    const originKey = genrateCanvasDataKey(origin)
-    if (canvasData.has(originKey)) {
-      return
-    }
-    drawMark(origin, hoverColor)
-  }
+  const onMouseMove = useCallback(
+    (event: MouseEvent) => {
+      const x = event.offsetX
+      const y = event.offsetY
+      const origin = getOrigin({ x, y }, gridWidth)
+      const originKey = genrateCanvasDataKey(origin)
+      if (canvasData.has(originKey)) {
+        return
+      }
+      drawMark(origin, hoverColor)
+    },
+    [canvasData, drawMark, gridWidth, hoverColor]
+  )
 
   const onClickCanvas = useCallback(
     (event: MouseEvent) => {
-      console.log(1)
       if (tool === Tools['PENCEL']) {
         return paint(event)
       }
       if (tool === Tools['ERASER']) {
-        return clear(event)
+        return clear()
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [tool]
   )
 
-  const onMouseLeave = () => {
+  const onMouseLeave = useCallback(() => {
     clearMark()
-  }
+  }, [])
 
-  const onMouseDown = (event: MouseEvent) => {
-    const canvas = canvasRef.current
+  const onMouseDown = useCallback(
+    (event: MouseEvent) => {
+      const canvas = canvasRef.current
 
-    if (event.button === 0) {
-      canvas?.addEventListener('mousemove', onClickCanvas)
-    }
-  }
+      if (event.button === 0) {
+        canvas?.addEventListener('mousemove', onClickCanvas)
+      }
+    },
+    [onClickCanvas]
+  )
 
-  const onMouseUp = (event: MouseEvent) => {
-    const canvas = canvasRef.current
-    if (event.button === 0) {
-      console.log('up', '?')
-      canvas!.removeEventListener('mousemove', onClickCanvas)
-    }
-  }
+  const onMouseUp = useCallback(
+    (event: MouseEvent) => {
+      const canvas = canvasRef.current
+      if (event.button === 0) {
+        canvas?.removeEventListener('mousemove', onClickCanvas)
+      }
+    },
+    [onClickCanvas]
+  )
 
   //init canvas
   useEffect(() => {
@@ -174,11 +198,11 @@ export const Canvas = () => {
   useEffect(() => {
     const canvas = canvasRef.current
 
-    canvas?.addEventListener('mouseleave', onMouseLeave)
+    // canvas?.addEventListener('mouseleave', onMouseLeave)
     canvas?.addEventListener('mousemove', onMouseMove)
-    canvas?.addEventListener('click', onClickCanvas)
     canvas?.addEventListener('mousedown', onMouseDown)
     canvas?.addEventListener('mouseup', onMouseUp)
+    // canvas?.addEventListener('click', onClickCanvas)
 
     return () => {
       canvas?.removeEventListener('mouseleave', onMouseLeave)
@@ -187,8 +211,8 @@ export const Canvas = () => {
       canvas?.removeEventListener('mousedown', onMouseDown)
       canvas?.removeEventListener('mouseup', onMouseUp)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tool, size])
+
+  }, [onClickCanvas, onMouseDown, onMouseLeave, onMouseMove, onMouseUp])
 
   return (
     <div className='f-center flex-1 relative'>
@@ -196,4 +220,4 @@ export const Canvas = () => {
       <canvas className='absolute z-1' ref={canvasRef}></canvas>
     </div>
   )
-}
+})
