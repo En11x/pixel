@@ -19,7 +19,7 @@ export const useStore = create<Store>(set => ({
     set(s => {
       const copy = deepCopyMap<number, string>(s.data)
       copy.set(pos, color)
-
+      console.log(copy, 'set')
       return { ...s, data: copy }
     }),
   delData: pos =>
