@@ -1,10 +1,4 @@
-import { Tools } from '@/types'
-
-interface ToolOption{
-  current:Tools
-  color:string
-  size:number
-}
+import { Tools } from '@/types/index'
 
 export interface CanvasState {
   config: {
@@ -17,7 +11,11 @@ export interface CanvasState {
     gridWidth: number
     hoverColor: string
   }
-  tool:ToolOption
+  tool: {
+    current: Tools
+    color: string
+    size: number
+  }
   data: Map<number, string>
 }
 
