@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useStore } from '@/store'
 import { Position, Tools } from '@/types'
-import { genrateCanvasDataKey, getOrigin, pxToNumber } from '@/utils'
+import { genrateCanvasDataKey, getOrigin, pxToNumber, restoreCanvasDataKey } from '@/utils'
 
 export const Canvas = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -74,20 +74,16 @@ export const Canvas = memo(() => {
     const top = pxToNumber(markTop) - canvasTop
     const right = left + markWidth
     const bottom = top + markWidth
-    console.log('clear', canvasData, left, right, top, bottom)
-    for (let x = left; x < right; x += gridWidth) {
-      for (let y = top; y < bottom; y += gridWidth) {
-        const origin = getOrigin({ x, y }, gridWidth)
-        console.log(origin, '', canvasData)
-        const key = genrateCanvasDataKey(origin)
-        if (canvasData.has(key)) {
-          const bgColor = getPixelBg(origin)
-          drawPixel(origin, bgColor)
-          setCanvasData(s => {
-            s.delete(key)
-            return s
-          })
-        }
+
+    for (const key of canvasData.keys()) {
+      const origin = restoreCanvasDataKey(key)
+      if (origin.x >= left && origin.x <= right && origin.y >= top && origin.y <= bottom) {
+        const bgColor = getPixelBg(origin)
+        drawPixel(origin, bgColor)
+        setCanvasData(s => {
+          s.delete(key)
+          return s
+        })
       }
     }
   }, [canvasData, size, gridWidth, getPixelBg, drawPixel])
