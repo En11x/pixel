@@ -20,8 +20,9 @@ export default defineConfig({
           /^repeat-(.+)$/,
           ([, v]) => ({ display: 'grid', 'grid-template-columns': `repeat(${v},1fr)` })
         ],
-        [/^flex-basis-(.+)$/, ([, v]) => ({ 'flex-basis': `${v}` })]
+        [/^flex-basis-(.+)$/, ([, v]) => ({ 'flex-basis': `${v}` })],
         // [/^bp-(.+)-(.+)$/, ([, x,y]) => ({ 'background-position': `${x}px ${y}px` })]
+        ['space-nowrap', { 'white-space': 'nowrap' }],
       ],
       shortcuts: [
         {

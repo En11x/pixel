@@ -19,10 +19,7 @@ export const ToolOption = () => {
     <div className='w-100% bg-222 h-30px flex items-center px-2 fs-10 gap-12px'>
       <div className='f-center'>{currentTool}:</div>
       {options[currentTool]}
-      <div className='f-center'>
-        <label className='p2'>PIXEL SIZE({size})</label>
-        <Range value={size} onChange={setToolSize} />
-      </div>
+      <Range value={size} onChange={setToolSize} label={`PIXEL SIZE(${size})`} />
     </div>
   )
 }
