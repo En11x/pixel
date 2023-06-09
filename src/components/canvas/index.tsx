@@ -1,6 +1,5 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useStore } from '@/store'
-import { Position, Tools } from '@/types'
 import { genrateCanvasDataKey, getOrigin, pxToNumber, restoreCanvasDataKey } from '@/utils'
 
 export const Canvas = memo(() => {

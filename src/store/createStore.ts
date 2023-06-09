@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { CanvasState, initialState } from './initialState'
 import { produce } from 'immer'
-import { Tools } from '@/types'
 import { deepCopyMap } from '@/utils'
 
 interface Action {

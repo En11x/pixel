@@ -1,5 +1,3 @@
-import { Tools, ToolsOptions } from '@/types/index'
-
 export interface CanvasState {
   config: {
     width: number
@@ -15,7 +13,7 @@ export interface CanvasState {
     current: Tools
     color: string
     size: number
-    [Tools.PENCEL]:ToolsOptions[Tools.PENCEL]
+    [Tools.PENCEL]: ToolsOptions[Tools.PENCEL]
   }
   data: Map<number, string>
 }
@@ -35,8 +33,8 @@ export const initialState: CanvasState = {
     current: Tools['PENCEL'],
     color: '#000000',
     size: 1,
-    PENCEL:{
-      rightClickEraser:true
+    PENCEL: {
+      rightClickEraser: true
     }
   },
   data: new Map()
