@@ -16,6 +16,7 @@ export interface CanvasState {
     color: string
     size: number
     [Tools.PENCEL]: ToolsOptions[Tools.PENCEL]
+    [Tools.ERASER]: ToolsOptions[Tools.ERASER]
   }
   data: Map<number, string>
 }
@@ -37,6 +38,9 @@ export const initialState: CanvasState = {
     size: 1,
     PENCEL: {
       rightClickEraser: true
+    },
+    ERASER: {
+      strength: 1
     }
   },
   data: new Map()
