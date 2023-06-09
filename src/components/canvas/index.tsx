@@ -16,9 +16,9 @@ export const Canvas = memo(() => {
   // 卡顿 in zustand store
   // const setCanvasData = useStore(s => s.setData)
   // const delCanvasData = useStore(s => s.delData)
-  const tool = useStore(s => s.settings.tool)
-  const toolColor = useStore(s => s.settings.color)
-  const size = useStore(s => s.settings.size)
+  const tool = useStore(s => s.tool.current)
+  const toolColor = useStore(s => s.tool.color)
+  const toolSize = useStore(s => s.tool.size)
   const [canvasData, setCanvasData] = useState<Map<number, string>>(new Map())
   const [pointerPos,setPointerPos] = useState<Position>({x:0,y:0})
 
@@ -26,11 +26,11 @@ export const Canvas = memo(() => {
     (pos: Position, color: string, isBg = false) => {
       const canvas = canvasRef.current
       const context = canvas?.getContext('2d') as CanvasRenderingContext2D
-      const width = isBg ? 1 : size
+      const width = isBg ? 1 : toolSize
       context.fillStyle = color
       context.fillRect(pos.x, pos.y, gridWidth * width, gridWidth * width)
     },
-    [gridWidth, size]
+    [gridWidth, toolSize]
   )
 
   const getPixelBg = useCallback(
@@ -50,20 +50,20 @@ export const Canvas = memo(() => {
       const y = event.offsetY
       const x = event.offsetX
       const origin = getOrigin({ x, y }, gridWidth)
-      const offset = Math.floor(size / 2) * gridWidth
+      const offset = Math.floor(toolSize / 2) * gridWidth
       const offsetOrigin ={x:origin.x - offset,y:origin.y-offset}
       const key = genrateCanvasDataKey(offsetOrigin)
       if (!canvasData.has(key)) {
         clearMark()
         drawPixel(offsetOrigin, toolColor)
-        for (let i = offsetOrigin.x; i <= offsetOrigin.x + size * gridWidth; i += gridWidth) {
-          for (let j = offsetOrigin.y; j <= offsetOrigin.y + size * gridWidth; j += gridWidth) {
+        for (let i = offsetOrigin.x; i <= offsetOrigin.x + toolSize * gridWidth; i += gridWidth) {
+          for (let j = offsetOrigin.y; j <= offsetOrigin.y + toolSize * gridWidth; j += gridWidth) {
             setCanvasData(s => s.set(genrateCanvasDataKey({ x: i, y: j }), toolColor))
           }
         }
       }
     },
-    [canvasData, drawPixel, gridWidth, setCanvasData, toolColor, size]
+    [canvasData, drawPixel, gridWidth, setCanvasData, toolColor, toolSize]
   )
 
   const clear = useCallback(() => {
@@ -74,7 +74,7 @@ export const Canvas = memo(() => {
     const canvas = canvasRef.current
     const canvasLeft = canvas?.offsetLeft || 0
     const canvasTop = canvas?.offsetTop || 0
-    const markWidth = size * gridWidth
+    const markWidth = toolSize * gridWidth
     const markLeft = mark?.style.left || ''
     const markTop = mark?.style.top || ''
     const left = pxToNumber(markLeft) - canvasLeft
@@ -93,7 +93,7 @@ export const Canvas = memo(() => {
         })
       }
     }
-  }, [canvasData, size, gridWidth, getPixelBg, drawPixel])
+  }, [canvasData, toolSize, gridWidth, getPixelBg, drawPixel])
 
   const drawMark = useCallback(
     ({ x, y }: Position, color: string) => {
@@ -103,8 +103,8 @@ export const Canvas = memo(() => {
       const maxX = minX + width
       const minY = canvas?.offsetTop || 0
       const maxY = minY + height
-      const markWidth = gridWidth * size
-      const offset = Math.floor(size / 2) * gridWidth
+      const markWidth = gridWidth * toolSize
+      const offset = Math.floor(toolSize / 2) * gridWidth
       const markLeft = x + minX - offset
       const markRight = markLeft + markWidth
       const markTop = y + minY - offset
@@ -120,7 +120,7 @@ export const Canvas = memo(() => {
       context.fillStyle = color
       context.fillRect(0, 0, markWidth, markWidth)
     },
-    [gridWidth, height, size, width]
+    [gridWidth, height, toolSize, width]
   )
 
   const clearMark = () => {

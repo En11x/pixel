@@ -8,7 +8,7 @@ interface Action {
   setData: (pos: number, color: string) => void
   delData: (pos: number) => void
   setTool: (tool: Tools) => void
-  setSize: (size: number) => void
+  setToolSize: (size: number) => void
 }
 
 export type Store = CanvasState & Action
@@ -32,13 +32,13 @@ export const useStore = create<Store>(set => ({
   setTool: tool =>
     set(
       produce(s => {
-        s.settings.tool = tool
+        s.tool.current = tool
       })
     ),
-  setSize: size =>
+  setToolSize: size =>
     set(
       produce(s => {
-        s.settings.size = size
+        s.tool.size = size
       })
     )
 }))
