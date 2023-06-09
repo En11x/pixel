@@ -3,7 +3,7 @@ import { Layout } from '@/components/layout'
 import { Navbar } from '@/components/navbar'
 import { Navigation } from '@/components/navigation'
 import { Tool } from '@/components/tools'
-import { ToolOption } from './components/tools/ToolOption'
+import { ToolOption } from './components/tools/options/index'
 
 function App() {
   return (
