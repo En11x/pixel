@@ -19,6 +19,7 @@ export const Canvas = memo(() => {
   const tool = useStore(s => s.tool.current)
   const toolColor = useStore(s => s.tool.color)
   const toolSize = useStore(s => s.tool.size)
+  const rightClickEraser = useStore(s=>s.tool.PENCEL.rightClickEraser)
   const [canvasData, setCanvasData] = useState<Map<number, string>>(new Map())
   const [pointerPos, setPointerPos] = useState<Position>({ x: 0, y: 0 })
 
@@ -145,6 +146,7 @@ export const Canvas = memo(() => {
 
   const onClickCanvas = useCallback(
     (event: MouseEvent) => {
+      event.preventDefault()
       if (tool === Tools['PENCEL']) {
         return paint(event)
       }
@@ -179,6 +181,13 @@ export const Canvas = memo(() => {
     },
     [onClickCanvas]
   )
+
+  const onClickRight = useCallback((event:MouseEvent)=>{
+    event.preventDefault()
+    if(rightClickEraser){
+      clear()
+    }
+  },[rightClickEraser,clear])
 
   //init canvas
   useEffect(() => {
@@ -221,6 +230,7 @@ export const Canvas = memo(() => {
     canvas?.addEventListener('mousedown', onMouseDown)
     canvas?.addEventListener('mouseup', onMouseUp)
     canvas?.addEventListener('click', onClickCanvas)
+    canvas?.addEventListener('contextmenu',onClickRight)
 
     return () => {
       canvas?.removeEventListener('mouseleave', onMouseLeave)
@@ -228,8 +238,9 @@ export const Canvas = memo(() => {
       canvas?.removeEventListener('click', onClickCanvas)
       canvas?.removeEventListener('mousedown', onMouseDown)
       canvas?.removeEventListener('mouseup', onMouseUp)
+      canvas?.removeEventListener('contextmenu', onClickRight)
     }
-  }, [onClickCanvas, onMouseDown, onMouseLeave, onMouseMove, onMouseUp])
+  }, [onClickCanvas, onClickRight, onMouseDown, onMouseLeave, onMouseMove, onMouseUp])
 
   return (
     <div className='f-center flex-1 relative'>
