@@ -20,6 +20,7 @@ export const Canvas = memo(() => {
   const toolColor = useStore(s => s.settings.color)
   const size = useStore(s => s.settings.size)
   const [canvasData, setCanvasData] = useState<Map<number, string>>(new Map())
+  const [pointerPos,setPointerPos] = useState<Position>({x:0,y:0})
 
   const drawPixel = useCallback(
     (pos: Position, color: string, isBg = false) => {
@@ -132,6 +133,7 @@ export const Canvas = memo(() => {
     (event: MouseEvent) => {
       const x = event.offsetX
       const y = event.offsetY
+      setPointerPos({x,y})
       const mark = markRef.current as HTMLCanvasElement
       const origin = getOrigin({ x, y }, gridWidth)
       const originKey = genrateCanvasDataKey(origin)
@@ -231,6 +233,7 @@ export const Canvas = memo(() => {
 
   return (
     <div className='f-center flex-1 relative'>
+      <div className='absolute left-2 top-2 fs-12'>X:{pointerPos.x},Y:{pointerPos.y}</div>
       <canvas className='absolute z-2 pointer-events-none' ref={markRef}></canvas>
       <canvas className='absolute z-1' ref={canvasRef}></canvas>
     </div>
