@@ -1,6 +1,7 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useStore } from '@/store'
 import { genrateCanvasDataKey, getOrigin, pxToNumber, restoreCanvasDataKey } from '@/utils'
+import { Position, Tools } from '@/types'
 
 export const Canvas = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)

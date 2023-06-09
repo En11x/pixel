@@ -1,3 +1,5 @@
+import { Tools, ToolsOptions } from "@/types"
+
 export interface CanvasState {
   config: {
     width: number

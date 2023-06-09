@@ -2,6 +2,7 @@ import { useStore } from '@/store'
 import { Range } from '@/components/inputs'
 import { ReactNode } from 'react'
 import { Pencel } from './pencel'
+import { Tools } from '@/types'
 
 const options: Record<Tools, ReactNode> = {
   PENCEL: <Pencel />,

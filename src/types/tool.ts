@@ -1,10 +1,10 @@
-enum Tools {
+export enum Tools {
   PENCEL = 'PENCEL',
   ERASER = 'ERASER',
   BRUSH = 'BRUSH'
 }
 
-interface ToolsOptions {
+export interface ToolsOptions {
   PENCEL: {
     rightClickEraser: boolean
   }
