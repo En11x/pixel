@@ -49,12 +49,14 @@ export const Canvas = memo(() => {
       const y = event.offsetY
       const x = event.offsetX
       const origin = getOrigin({ x, y }, gridWidth)
-      const key = genrateCanvasDataKey(origin)
+      const offset = Math.floor(size / 2) * gridWidth
+      const offsetOrigin ={x:origin.x - offset,y:origin.y-offset}
+      const key = genrateCanvasDataKey(offsetOrigin)
       if (!canvasData.has(key)) {
         clearMark()
-        drawPixel(origin, toolColor)
-        for (let i = origin.x; i <= origin.x + size * gridWidth; i += gridWidth) {
-          for (let j = origin.y; j <= origin.y + size * gridWidth; j += gridWidth) {
+        drawPixel(offsetOrigin, toolColor)
+        for (let i = offsetOrigin.x; i <= offsetOrigin.x + size * gridWidth; i += gridWidth) {
+          for (let j = offsetOrigin.y; j <= offsetOrigin.y + size * gridWidth; j += gridWidth) {
             setCanvasData(s => s.set(genrateCanvasDataKey({ x: i, y: j }), toolColor))
           }
         }
