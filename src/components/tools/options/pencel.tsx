@@ -6,9 +6,12 @@ export const Pencel = () => {
   const setRightClickEraser = useStore(s => s.setPencelRightClickEraser)
 
   return (
-    <div className='f-center'>
-      <Checkbox value={rightClickEraser} onChange={setRightClickEraser} />
-      <span>RIGHT CLICK ERASER</span>
-    </div>
+    <>
+      <Checkbox
+        value={rightClickEraser}
+        onChange={setRightClickEraser}
+        label='RIGHT CLICK ERASER'
+      />
+    </>
   )
 }
