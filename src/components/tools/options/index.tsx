@@ -16,7 +16,7 @@ export const ToolOption = () => {
   const setToolSize = useStore(s => s.setToolSize)
 
   return (
-    <div className='w-100% bg-222 h-30px flex items-center px-2 fs-10'>
+    <div className='w-100% bg-222 h-30px flex items-center px-2 fs-10 gap-12px'>
       <div className='f-center'>{currentTool}:</div>
       {options[currentTool]}
       <div className='f-center'>

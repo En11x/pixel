@@ -2,14 +2,13 @@ import { Checkbox } from '@/components/inputs/checkbox'
 import { useStore } from '@/store'
 
 export const Pencel = () => {
-  const pencel = useStore(s => s.tool.PENCEL)
+  const rightClickEraser = useStore(s => s.tool.PENCEL.rightClickEraser)
+  const setRightClickEraser = useStore(s => s.setPencelRightClickEraser)
 
   return (
     <div className='f-center'>
-      <span className='p2'>RIGHT CLICK ERASER</span>
-      <Checkbox value={true} onChange={()=>{
-        console.log(1)
-      }}  />
+      <Checkbox value={rightClickEraser} onChange={setRightClickEraser} />
+      <span>RIGHT CLICK ERASER</span>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { Tools, ToolsOptions } from "@/types"
+import { Tools, ToolsOptions } from '@/types'
 
 export interface CanvasState {
   config: {
