@@ -34,7 +34,7 @@ export const initialState: CanvasState = {
   },
   tool: {
     current: Tools['PENCEL'],
-    color: '#000000',
+    color: '#2196f3',
     size: 1,
     PENCEL: {
       rightClickEraser: true

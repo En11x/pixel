@@ -1,7 +1,13 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useStore } from '@/store'
-import { genrateCanvasDataKey, getOrigin, pxToNumber, restoreCanvasDataKey } from '@/utils'
+import {
+  genrateCanvasDataKey,
+  getOrigin,
+  pxToNumber,
+  restoreCanvasDataKey
+} from '@/utils'
 import { Position, Tools } from '@/types'
+
 
 export const Canvas = memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -20,7 +26,9 @@ export const Canvas = memo(() => {
   const toolColor = useStore(s => s.tool.color)
   const toolSize = useStore(s => s.tool.size)
   const rightClickEraser = useStore(s => s.tool.PENCEL.rightClickEraser)
-  const [canvasData, setCanvasData] = useState<Map<number, string>>(new Map())
+  const [canvasData, setCanvasData] = useState<Map<number, string>>(
+    new Map()
+  )
   const [pointerPos, setPointerPos] = useState<Position>({ x: 0, y: 0 })
 
   const drawPixel = useCallback(
@@ -29,6 +37,7 @@ export const Canvas = memo(() => {
       const context = canvas?.getContext('2d') as CanvasRenderingContext2D
       const width = isBg ? 1 : toolSize
       context.fillStyle = color
+      context.clearRect(pos.x, pos.y, gridWidth * width, gridWidth * width)
       context.fillRect(pos.x, pos.y, gridWidth * width, gridWidth * width)
     },
     [gridWidth, toolSize]
@@ -57,9 +66,11 @@ export const Canvas = memo(() => {
       if (!canvasData.has(key)) {
         clearMark()
         drawPixel(offsetOrigin, toolColor)
-        for (let i = offsetOrigin.x; i <= offsetOrigin.x + toolSize * gridWidth; i += gridWidth) {
-          for (let j = offsetOrigin.y; j <= offsetOrigin.y + toolSize * gridWidth; j += gridWidth) {
-            setCanvasData(s => s.set(genrateCanvasDataKey({ x: i, y: j }), toolColor))
+        for (let i = offsetOrigin.x; i < offsetOrigin.x + toolSize * gridWidth; i += gridWidth) {
+          for (let j = offsetOrigin.y; j < offsetOrigin.y + toolSize * gridWidth; j += gridWidth) {
+            setCanvasData(s =>
+              s.set(genrateCanvasDataKey({ x: i, y: j }), toolColor)
+            )
           }
         }
       }
@@ -89,7 +100,7 @@ export const Canvas = memo(() => {
         const bgColor = getPixelBg(origin)
         drawPixel(origin, bgColor, true)
         setCanvasData(s => {
-          s.delete(key)
+           s.delete(key)
           return s
         })
       }
